@@ -7,6 +7,8 @@ Ce projet propose une interface web interactive pour visualiser un tableau élec
 - Rechercher un disjoncteur à l'aide d'un mot-clé.
 - Réinitialiser la recherche avec un bouton ou la touche `Escape`.
 
+![Screenshot](./screenshot.png "Screenshot")
+
 ## Fonctionnalités
 
 ### Visualisation dynamique
