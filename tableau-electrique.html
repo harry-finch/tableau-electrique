@@ -8,7 +8,8 @@
             body {
                 font-family: Arial, sans-serif;
                 margin: 20px;
-                background-color: aliceblue;
+                background-color: #efeeee;
+                color: #333;
             }
             h1 {
                 text-align: center;
@@ -19,12 +20,18 @@
                 margin: auto;
                 padding: 50px;
                 background-color: white;
+                border-radius: 20px;
+                border: solid 1px #ccc;
             }
             #search {
                 width: 40%;
             }
             .search-bar {
                 margin-bottom: 20px;
+                text-align: center;
+            }
+            .search-bar {
+                margin-right: 10px;
             }
             #tableau {
                 display: flex;
@@ -38,11 +45,11 @@
             .disjoncteur {
                 width: 80px;
                 height: 120px;
-                border: solid 2px white;
+                border: solid 1px white;
                 display: flex;
                 align-items: top;
                 padding-top: 20px;
-                margin-right: 1px;
+                margin-right: 3px;
                 justify-content: center;
                 color: white;
                 background-color: #f9f9f9;
@@ -53,7 +60,9 @@
                 cursor: pointer;
             }
             .disjoncteur:hover {
-                background-color: #eaeaea;
+                /* background-color: #eaeaea; */
+                /* border: solid 1px #ddd; */
+                transform: translateY(-2px);
             }
             .disabled {
                 opacity: 10%;
@@ -63,14 +72,15 @@
                 bottom: 105%;
                 left: 50%;
                 transform: translateX(-50%);
-                background-color: #fff;
-                border: 1px solid #ccc;
+                border-radius: 6px;
                 padding: 10px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 display: none;
                 z-index: 10;
-                color: black;
+                background-color: #555;
+                color: #ddd;
                 font-size: 0.8em;
+                width: 100px;
+                text-align: center;
             }
             .popup.visible {
                 display: block;
@@ -81,7 +91,6 @@
         <div class="container">
             <h1>Tableau électrique</h1>
             <div class="search-bar">
-                <label for="search">Rechercher :</label>
                 <input
                     type="text"
                     id="search"
@@ -101,7 +110,7 @@
                     { id: "D1", info: "Plaques de cuisson", disabled: false },
                     { id: "D2", info: "Éclairage ch1", disabled: false },
                     { id: "D3", info: "N/A", disabled: true },
-                    { id: "D4", info: "Éclairage sdb1, éclairage sdb2, éclairage couloir, prises sdb1", disabled: false },
+                    { id: "D4", info: "Éclairage sdb1<br>Éclairage sdb2<br>Éclairage couloir<br>Prises sdb1", disabled: false },
                     { id: "D5", info: "Frigo", disabled: false },
                     { id: "D6", info: "Hotte", disabled: false },
                     { id: "D7", info: "Climatisation", disabled: false },
@@ -110,7 +119,7 @@
                 [
                     { id: "D9", info: "Four", disabled: false },
                     { id: "D10", info: "Prises cuisine", disabled: false },
-                    { id: "D11", info: "Prises ch1, prises ch2", disabled: false },
+                    { id: "D11", info: "Prises ch1<br>Prises ch2", disabled: false },
                     { id: "D12", info: "Éclairage cuisine", disabled: false },
                     { id: "D13", info: "Chauffage cuisine", disabled: false },
                     { id: "D14", info: "N/A", disabled: true },
@@ -120,8 +129,8 @@
                 [
                     { id: "D17", info: "Lave-vaisselle", disabled: false },
                     { id: "D18", info: "Chauffe-eau", disabled: false },
-                    { id: "D19", info: "Chauffage ch2, éclairage ch2, prises cabanon, éclairage cabanon", disabled: false },
-                    { id: "D20", info: "Prises séjour, chauffe-serviette", disabled: false },
+                    { id: "D19", info: "Chauffage ch2<br>Éclairage ch2<br>Prises cabanon<br>Éclairage cabanon", disabled: false },
+                    { id: "D20", info: "Prises séjour<br>Chauffe-serviette", disabled: false },
                     { id: "D21", info: "Prise couloir", disabled: false },
                     { id: "D22", info: "N/A", disabled: true },
                     { id: "D23", info: "N/A", disabled: true },
@@ -171,12 +180,15 @@
                 const searchTerm = document.getElementById("search").value.toLowerCase();
                 document.querySelectorAll(".disjoncteur").forEach((disjoncteur) => {
                     const info = disjoncteur.dataset.info.toLowerCase();
+                    const popup = disjoncteur.querySelector(".popup");
                     if (info.includes(searchTerm)) {
                         disjoncteur.style.backgroundColor = "yellow";
-                        disjoncteur.style.border = "solid 2px red";
+                        disjoncteur.style.border = "solid 1px red";
+                        popup.classList.add("visible");
                     } else {
                         disjoncteur.style.backgroundColor = "#f9f9f9";
-                        disjoncteur.style.border = "solid 2px white";
+                        disjoncteur.style.border = "solid 1px white";
+                        popup.classList.remove("visible");
                     }
                 });
             }
@@ -184,16 +196,19 @@
             function resetSearch() {
                 document.getElementById("search").value = "";
                 document.querySelectorAll(".disjoncteur").forEach((disjoncteur) => {
+                    const popup = disjoncteur.querySelector(".popup");
                     disjoncteur.style.backgroundColor = "#f9f9f9";
-                    disjoncteur.style.border = "solid 2px white";
+                    disjoncteur.style.border = "solid 1px white";
+                    popup.classList.remove("visible");
                 });
             }
-
             document.addEventListener("keydown", (event) => {
                 if (event.key === "Escape") {
                     resetSearch();
                 }
             });
+
+            // document.getElementById("search").addEventListener("input", searchDisjoncteur);
 
             createTableau(tableauData);
         </script>
