@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Tableau Électrique</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                background-color: aliceblue;
+            }
+            h1 {
+                text-align: center;
+                margin-bottom: 60px;
+            }
+            .container {
+                max-width: 700px;
+                margin: auto;
+                padding: 50px;
+                background-color: white;
+            }
+            #search {
+                width: 40%;
+            }
+            .search-bar {
+                margin-bottom: 20px;
+            }
+            #tableau {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .ligne {
+                display: flex;
+                margin-top: 80px;
+            }
+            .disjoncteur {
+                width: 80px;
+                height: 120px;
+                border: solid 2px white;
+                display: flex;
+                align-items: top;
+                padding-top: 20px;
+                margin-right: 1px;
+                justify-content: center;
+                color: white;
+                background-color: #f9f9f9;
+                background-image: url("disjoncteur.png");
+                background-size: cover;
+                background-position: center;
+                position: relative;
+                cursor: pointer;
+            }
+            .disjoncteur:hover {
+                background-color: #eaeaea;
+            }
+            .disabled {
+                opacity: 10%;
+            }
+            .popup {
+                position: absolute;
+                bottom: 105%;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #fff;
+                border: 1px solid #ccc;
+                padding: 10px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                display: none;
+                z-index: 10;
+                color: black;
+                font-size: 0.8em;
+            }
+            .popup.visible {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Tableau électrique</h1>
+            <div class="search-bar">
+                <label for="search">Rechercher :</label>
+                <input
+                    type="text"
+                    id="search"
+                    placeholder="Entrez une prise ou un éclairage..."
+                    onkeydown="if(event.key === 'Enter') searchDisjoncteur()"
+                />
+                <button onclick="searchDisjoncteur()">Chercher</button>
+                <button onclick="resetSearch()">Réinitialiser</button>
+            </div>
+
+            <div id="tableau"></div>
+        </div>
+
+        <script>
+            const tableauData = [
+                [
+                    { id: "D1", info: "Plaques de cuisson", disabled: false },
+                    { id: "D2", info: "Éclairage ch1", disabled: false },
+                    { id: "D3", info: "N/A", disabled: true },
+                    { id: "D4", info: "Éclairage sdb1, éclairage sdb2, éclairage couloir, prises sdb1", disabled: false },
+                    { id: "D5", info: "Frigo", disabled: false },
+                    { id: "D6", info: "Hotte", disabled: false },
+                    { id: "D7", info: "Climatisation", disabled: false },
+                    { id: "D8", info: "N/A", disabled: true },
+                ],
+                [
+                    { id: "D9", info: "Four", disabled: false },
+                    { id: "D10", info: "Prises cuisine", disabled: false },
+                    { id: "D11", info: "Prises ch1, prises ch2", disabled: false },
+                    { id: "D12", info: "Éclairage cuisine", disabled: false },
+                    { id: "D13", info: "Chauffage cuisine", disabled: false },
+                    { id: "D14", info: "N/A", disabled: true },
+                    { id: "D15", info: "Éclairage séjour", disabled: false },
+                    { id: "D16", info: "N/A", disabled: true },
+                ],
+                [
+                    { id: "D17", info: "Lave-vaisselle", disabled: false },
+                    { id: "D18", info: "Chauffe-eau", disabled: false },
+                    { id: "D19", info: "Chauffage ch2, éclairage ch2, prises cabanon, éclairage cabanon", disabled: false },
+                    { id: "D20", info: "Prises séjour, chauffe-serviette", disabled: false },
+                    { id: "D21", info: "Prise couloir", disabled: false },
+                    { id: "D22", info: "N/A", disabled: true },
+                    { id: "D23", info: "N/A", disabled: true },
+                    { id: "D24", info: "N/A", disabled: true },
+                ],
+            ];
+
+            function createTableau(data) {
+                const tableau = document.getElementById("tableau");
+                tableau.innerHTML = "";
+
+                data.forEach((ligne) => {
+                    const ligneDiv = document.createElement("div");
+                    ligneDiv.classList.add("ligne");
+
+                    ligne.forEach((disjoncteur) => {
+                        const disjoncteurDiv = document.createElement("div");
+                        disjoncteurDiv.classList.add("disjoncteur");
+                        if (disjoncteur.disabled) {
+                            disjoncteurDiv.classList.add("disabled");
+                        }
+                        disjoncteurDiv.dataset.info = disjoncteur.info;
+
+                        disjoncteurDiv.innerHTML = `
+                            ${disjoncteur.id}
+                            <div class="popup">${disjoncteur.info}</div>
+                        `;
+
+                        disjoncteurDiv.addEventListener("mouseenter", () => {
+                            const popup = disjoncteurDiv.querySelector(".popup");
+                            popup.classList.add("visible");
+                        });
+
+                        disjoncteurDiv.addEventListener("mouseleave", () => {
+                            const popup = disjoncteurDiv.querySelector(".popup");
+                            popup.classList.remove("visible");
+                        });
+
+                        ligneDiv.appendChild(disjoncteurDiv);
+                    });
+
+                    tableau.appendChild(ligneDiv);
+                });
+            }
+
+            function searchDisjoncteur() {
+                const searchTerm = document.getElementById("search").value.toLowerCase();
+                document.querySelectorAll(".disjoncteur").forEach((disjoncteur) => {
+                    const info = disjoncteur.dataset.info.toLowerCase();
+                    if (info.includes(searchTerm)) {
+                        disjoncteur.style.backgroundColor = "yellow";
+                        disjoncteur.style.border = "solid 2px red";
+                    } else {
+                        disjoncteur.style.backgroundColor = "#f9f9f9";
+                        disjoncteur.style.border = "solid 2px white";
+                    }
+                });
+            }
+
+            function resetSearch() {
+                document.getElementById("search").value = "";
+                document.querySelectorAll(".disjoncteur").forEach((disjoncteur) => {
+                    disjoncteur.style.backgroundColor = "#f9f9f9";
+                    disjoncteur.style.border = "solid 2px white";
+                });
+            }
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    resetSearch();
+                }
+            });
+
+            createTableau(tableauData);
+        </script>
+    </body>
+</html>
